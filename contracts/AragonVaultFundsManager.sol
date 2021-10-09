@@ -23,6 +23,10 @@ contract AragonVaultFundsManager is FundsManager {
         owner = _owner;
     }
 
+    function fundsOwner() public view returns (address) {
+        return address(aragonVault);
+    }
+
     function balance(address _token) public view returns (uint256) {
         return aragonVault.balance(_token);
     }

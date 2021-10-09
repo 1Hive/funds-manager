@@ -27,6 +27,10 @@ contract GnosisSafeFundsManager is FundsManager {
         owner = _owner;
     }
 
+    function fundsOwner() public view returns (address) {
+        return address(gnosisSafe);
+    }
+
     function balance(address _token) public view returns (uint256) {
         ERC20 token = ERC20(_token);
         return token.balanceOf(address(gnosisSafe));

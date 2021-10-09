@@ -36,6 +36,12 @@ contract('GnosisSafeFundsManager', ([owner, newOwner, tokenReceiver]) => {
       })
     })
 
+    describe('fundsOwner()', () => {
+      it('returns the funds owner', async () => {
+        assert.equal(await gnosisSafeFundsManager.fundsOwner(), gnosisSafe.address, "Incorrect funds owner")
+      })
+    })
+
     describe('balance()', () => {
       it('returns the correct balance', async () => {
         assert.equal(await gnosisSafeFundsManager.balance(token.address), GNOSIS_SAFE_FUNDS, "Incorrect balance")

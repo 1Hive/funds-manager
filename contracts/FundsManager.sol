@@ -2,6 +2,8 @@ pragma solidity ^0.4.24;
 
 contract FundsManager {
 
+    function fundsOwner() public view returns (address);
+
     function balance(address _token) public view returns (uint256);
 
     // This must revert if the transfer fails or returns false

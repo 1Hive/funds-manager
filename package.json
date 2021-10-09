@@ -1,6 +1,6 @@
 {
   "name": "@1hive/funds-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Funds Manager used in Conviction Voting and Issuance to abstract different funds containers",
   "scripts": {
     "test": "hardhat test",

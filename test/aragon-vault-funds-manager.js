@@ -36,6 +36,12 @@ contract('AragonVaultFundsManager', ([owner, newOwner, tokenReceiver]) => {
       })
     })
 
+    describe('fundsOwner()', () => {
+      it('returns the funds owner', async () => {
+        assert.equal(await aragonVaultFundsManager.fundsOwner(), vault.address, "Incorrect funds owner")
+      })
+    })
+
     describe('balance()', () => {
       it('returns the correct balance', async () => {
         assert.equal(await aragonVaultFundsManager.balance(token.address), VAULT_FUNDS, "Incorrect balance")
