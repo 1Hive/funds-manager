@@ -4,7 +4,7 @@ const AragonVaultFundsManager = artifacts.require('AragonVaultFundsManager')
 const Vault = artifacts.require('VaultMock')
 const MiniMeToken = artifacts.require('MiniMeToken')
 
-contract('AragonVaultFundsManager', ([owner, newOwner, tokenReceiver]) => {
+contract('AragonVaultFundsManager', ([owner, tokenReceiver]) => {
 
   let token, vault, aragonVaultFundsManager
 
@@ -21,19 +21,7 @@ contract('AragonVaultFundsManager', ([owner, newOwner, tokenReceiver]) => {
   describe("Contract tests", () => {
 
     it('sets correct constructor params', async () => {
-      assert.equal(await aragonVaultFundsManager.owner(), owner, "Incorrect owner")
       assert.equal(await aragonVaultFundsManager.aragonVault(), vault.address, "Incorrect owner")
-    })
-
-    describe('setOwner()', () => {
-      it('sets the owner', async () => {
-        await aragonVaultFundsManager.setOwner(newOwner)
-        assert.equal(await aragonVaultFundsManager.owner(), newOwner, "Incorrect owner")
-      })
-
-      it('reverts when not called by the owner', async () => {
-        await assertRevert(aragonVaultFundsManager.setOwner(newOwner, {from: newOwner}), "ERR:NOT_OWNER")
-      })
     })
 
     describe('fundsOwner()', () => {
@@ -51,6 +39,7 @@ contract('AragonVaultFundsManager', ([owner, newOwner, tokenReceiver]) => {
     describe('transfer()', () => {
       it('transfers the funds', async () => {
         const transferAmount = 250
+        await aragonVaultFundsManager.addFundsUser(owner)
 
         await aragonVaultFundsManager.transfer(token.address, tokenReceiver, transferAmount)
 
@@ -58,8 +47,8 @@ contract('AragonVaultFundsManager', ([owner, newOwner, tokenReceiver]) => {
         assert.equal(await token.balanceOf(vault.address), VAULT_FUNDS - transferAmount, "Incorrect vault balance")
       })
 
-      it('reverts when not called by the owner', async () => {
-        await assertRevert(aragonVaultFundsManager.transfer(token.address, tokenReceiver, 250, {from: tokenReceiver}), "ERR:NOT_OWNER")
+      it('reverts when not called by the fundsUser', async () => {
+        await assertRevert(aragonVaultFundsManager.transfer(token.address, tokenReceiver, 250, {from: tokenReceiver}), "ERR:NOT_FUNDS_USER")
       })
     })
   })

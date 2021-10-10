@@ -4,7 +4,7 @@ const GnosisSafeFundsManager = artifacts.require('GnosisSafeFundsManager')
 const GnosisSafe = artifacts.require('GnosisSafeMock')
 const MiniMeToken = artifacts.require('MiniMeToken')
 
-contract('GnosisSafeFundsManager', ([owner, newOwner, tokenReceiver]) => {
+contract('GnosisSafeFundsManager', ([owner, tokenReceiver]) => {
 
   let token, gnosisSafe, gnosisSafeFundsManager
 
@@ -21,19 +21,7 @@ contract('GnosisSafeFundsManager', ([owner, newOwner, tokenReceiver]) => {
   describe("Contract tests", () => {
 
     it('sets correct constructor params', async () => {
-      assert.equal(await gnosisSafeFundsManager.owner(), owner, "Incorrect owner")
       assert.equal(await gnosisSafeFundsManager.gnosisSafe(), gnosisSafe.address, "Incorrect owner")
-    })
-
-    describe('setOwner()', () => {
-      it('sets the owner', async () => {
-        await gnosisSafeFundsManager.setOwner(newOwner)
-        assert.equal(await gnosisSafeFundsManager.owner(), newOwner, "Incorrect owner")
-      })
-
-      it('reverts when not called by the owner', async () => {
-        await assertRevert(gnosisSafeFundsManager.setOwner(newOwner, {from: newOwner}), "ERR:NOT_OWNER")
-      })
     })
 
     describe('fundsOwner()', () => {
@@ -51,6 +39,7 @@ contract('GnosisSafeFundsManager', ([owner, newOwner, tokenReceiver]) => {
     describe('transfer()', () => {
       it('transfers the funds', async () => {
         const transferAmount = 250
+        await gnosisSafeFundsManager.addFundsUser(owner)
 
         await gnosisSafeFundsManager.transfer(token.address, tokenReceiver, transferAmount)
 
@@ -60,15 +49,17 @@ contract('GnosisSafeFundsManager', ([owner, newOwner, tokenReceiver]) => {
       })
 
       it('reverts when token transfer returns false', async () => {
+        await gnosisSafeFundsManager.addFundsUser(owner)
         await assertRevert(gnosisSafeFundsManager.transfer(token.address, tokenReceiver, GNOSIS_SAFE_FUNDS + 1), "ERR:TRANSFER_NOT_RETURN_TRUE")
       })
 
       it('reverts when token transfer reverts', async () => {
+        await gnosisSafeFundsManager.addFundsUser(owner)
         await assertRevert(gnosisSafeFundsManager.transfer(token.address, ZERO_ADDRESS, GNOSIS_SAFE_FUNDS), "ERR:TRANSFER_REVERTED")
       })
 
       it('reverts when not called by the owner', async () => {
-        await assertRevert(gnosisSafeFundsManager.transfer(token.address, tokenReceiver, 250, {from: tokenReceiver}), "ERR:NOT_OWNER")
+        await assertRevert(gnosisSafeFundsManager.transfer(token.address, tokenReceiver, 250, {from: tokenReceiver}), "ERR:NOT_FUNDS_USER")
       })
     })
   })

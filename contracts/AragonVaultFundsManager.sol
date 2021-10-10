@@ -6,21 +6,10 @@ import "@aragon/apps-vault/contracts/Vault.sol";
 // This contract must be granted the permission to transfer funds on the Aragon Vault it accepts
 contract AragonVaultFundsManager is FundsManager {
 
-    address public owner;
     Vault public aragonVault;
 
-    modifier onlyOwner {
-        require(msg.sender == owner, "ERR:NOT_OWNER");
-        _;
-    }
-
-    constructor(Vault _aragonVault) public {
-        owner = msg.sender;
+    constructor(Vault _aragonVault) FundsManager(msg.sender) public {
         aragonVault = _aragonVault;
-    }
-
-    function setOwner(address _owner) public onlyOwner {
-        owner = _owner;
     }
 
     function fundsOwner() public view returns (address) {
@@ -31,7 +20,7 @@ contract AragonVaultFundsManager is FundsManager {
         return aragonVault.balance(_token);
     }
 
-    function transfer(address _token, address _beneficiary, uint256 _amount) public onlyOwner {
+    function transfer(address _token, address _beneficiary, uint256 _amount) public onlyFundsUser {
         aragonVault.transfer(_token, _beneficiary, _amount);
     }
 }
