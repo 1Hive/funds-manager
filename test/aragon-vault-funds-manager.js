@@ -1,7 +1,7 @@
 const { assertRevert } = require('./helpers/assertRevert')
 const {ZERO_ADDRESS} = require("@aragon/contract-helpers-test");
 const AragonVaultFundsManager = artifacts.require('AragonVaultFundsManager')
-const Vault = artifacts.require('VaultMock')
+const Vault = artifacts.require('MockVault')
 const MiniMeToken = artifacts.require('MiniMeToken')
 
 contract('AragonVaultFundsManager', ([owner, tokenReceiver]) => {

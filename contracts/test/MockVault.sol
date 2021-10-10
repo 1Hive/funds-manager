@@ -1,8 +1,8 @@
 pragma solidity ^0.4.24;
 
-import "../ERC20.sol";
+import "@aragon/os/contracts/lib/token/ERC20.sol";
 
-contract VaultMock {
+contract MockVault {
 
     function transfer(address _token, address _to, uint256 _value) external {
         require(_value > 0, "transfer zero value error");
