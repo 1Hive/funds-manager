@@ -8,6 +8,7 @@ import "@aragon/os/contracts/lib/token/ERC20.sol";
 contract GnosisSafeFundsManager is FundsManager {
 
     bytes4 public constant TRANSFER_SELECTOR = 0xa9059cbb; // Equivalent of bytes4(keccak256("transfer(address,uint256)"))
+    address public constant ETH = address(0);
 
     GnosisSafe public gnosisSafe;
 
@@ -20,13 +21,24 @@ contract GnosisSafeFundsManager is FundsManager {
     }
 
     function balance(address _token) public view returns (uint256) {
-        ERC20 token = ERC20(_token);
-        return token.balanceOf(address(gnosisSafe));
+        if (_token == ETH) {
+            return address(gnosisSafe).balance;
+        } else {
+            ERC20 token = ERC20(_token);
+            return token.balanceOf(address(gnosisSafe));
+        }
     }
 
     function transfer(address _token, address _beneficiary, uint256 _amount) public onlyFundsUser {
-        bytes memory transferBytes = abi.encodeWithSelector(TRANSFER_SELECTOR, _beneficiary, _amount);
-        (bool success, bytes memory returnData) = gnosisSafe.execTransactionFromModuleReturnData(_token, 0, transferBytes, GnosisSafe.Operation.Call);
+        bool success;
+        bytes memory returnData;
+
+        if (_token == ETH) {
+            (success, returnData) = gnosisSafe.execTransactionFromModuleReturnData(_beneficiary, _amount, new bytes(0), GnosisSafe.Operation.Call);
+        } else {
+            bytes memory transferBytes = abi.encodeWithSelector(TRANSFER_SELECTOR, _beneficiary, _amount);
+            (success, returnData) = gnosisSafe.execTransactionFromModuleReturnData(_token, 0, transferBytes, GnosisSafe.Operation.Call);
+        }
 
         bool returnBool = false;
         assembly {
@@ -35,6 +47,6 @@ contract GnosisSafeFundsManager is FundsManager {
         }
 
         require(success, "ERR:TRANSFER_REVERTED");
-        require(returnBool, "ERR:TRANSFER_NOT_RETURN_TRUE");
+        if (_token != ETH) { require(returnBool, "ERR:TRANSFER_NOT_RETURN_TRUE"); }
     }
 }

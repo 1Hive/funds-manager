@@ -29,4 +29,6 @@ contract GnosisSafeMock is GnosisSafe {
             returnData := ptr
         }
     }
+
+    function () external payable {}
 }
