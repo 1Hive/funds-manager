@@ -25,7 +25,7 @@ contract('GnosisSafeFundsManager', ([owner, tokenReceiver]) => {
   describe("Contract tests", () => {
 
     it('sets correct constructor params', async () => {
-      assert.equal(await gnosisSafeFundsManager.gnosisSafe(), gnosisSafe.address, "Incorrect owner")
+      assert.equal(await gnosisSafeFundsManager.gnosisSafe(), gnosisSafe.address, "Incorrect Gnosis safe")
     })
 
     describe('fundsOwner()', () => {
@@ -84,7 +84,7 @@ contract('GnosisSafeFundsManager', ([owner, tokenReceiver]) => {
         await assertRevert(gnosisSafeFundsManager.transfer(ETH_ADDRESS, tokenReceiver, GNOSIS_SAFE_ETH_FUNDS + 1), "ERR:TRANSFER_REVERTED")
       })
 
-      it('reverts when not called by the owner', async () => {
+      it('reverts when not called by the funds user', async () => {
         await assertRevert(gnosisSafeFundsManager.transfer(token.address, tokenReceiver, 250, {from: tokenReceiver}), "ERR:NOT_FUNDS_USER")
       })
     })
