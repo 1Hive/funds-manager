@@ -1,0 +1,16 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+/artifacts
+/build
+.cache
+/cache
+/dist
+ipfs.cmd
+package-lock.json
+yarn.lock
+coverage.json
+/coverage
+.idea
+.DS_Store
